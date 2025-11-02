@@ -32,7 +32,7 @@ const Navbar = () => {
         {/* Buttons */}
         <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
           <button type="button" className="btn-primary">
-            Get Started
+            Signin Now
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
