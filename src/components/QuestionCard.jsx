@@ -7,7 +7,7 @@ const QuestionCard = () => {
   
   return (
      <>
-      <div className="max-w-sm !bg-white border border-gray-200 rounded-2xl shadow-lg !overflow-hidden">
+      <div className="max-w-sm bg-white! border border-gray-200 rounded-2xl shadow-lg overflow-hidden!">
         <div className=" relative">
           <span className={`absolute top-2 right-2 `} title="save" onClick={()=>setSaved(prev=>!prev)}>
             <Bookmark fill={`${saved? 'red':'#5AB2FF'}`} stroke="white" size={30} strokeWidth={0} className="rounded-lg"/>
@@ -30,7 +30,7 @@ const QuestionCard = () => {
           <div className="flex items-center justify-between border-t-2 border-gray-300 pt-3 ">
           <p className="flex gap-1 items-center text-gray-600"><Clock size={20} />1minute ago</p>
           <Link
-            to='/'
+            to={`/question-paper/if`}
             className="btn-primary text-sm"
             >
             Try Now

@@ -1,6 +1,6 @@
 import { Menu } from "lucide-react";
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // control mobile menu toggle
@@ -31,9 +31,11 @@ const Navbar = () => {
 
         {/* Buttons */}
         <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
-          <button type="button" className="btn-primary">
-            Signin Now
+          <Link to='/login'>
+          <button type="button" className="btn-primary ">
+            Log in
           </button>
+          </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
             type="button"

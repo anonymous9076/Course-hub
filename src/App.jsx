@@ -13,6 +13,7 @@ import Contact from "./Pages/Contact";
 import ScrollToTop from "./components/ScrollToTop";
 import { PrimeReactProvider } from 'primereact/api';
 import ViewCourse from "./Pages/ViewCourse";
+import ViewPaper from "./Pages/ViewPaper";
 function App() {
   return (
     <>
@@ -30,6 +31,7 @@ function App() {
             <Route path="/saved" element={<Saved />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/course/:id" element={<ViewCourse />} />
+            <Route path="/question-paper/:id" element={<ViewPaper />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

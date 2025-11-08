@@ -6,7 +6,7 @@ const Card = () => {
   const [saved,setSaved] =useState(false)
   return (
     <>
-      <div className="max-w-sm !bg-white border border-gray-200 rounded-2xl shadow-lg !overflow-hidden">
+      <div className="max-w-sm bg-white! border border-gray-200 rounded-2xl shadow-lg overflow-hidden!">
         <div className=" relative">
           <span className={`absolute top-2 right-2 `} title="save" onClick={()=>setSaved(prev=>!prev)}>
             <Bookmark fill={`${saved? 'red':'#5AB2FF'}`} stroke="white" size={30} strokeWidth={0} className="rounded-lg"/>
@@ -29,7 +29,7 @@ const Card = () => {
           <div className="flex items-center justify-between border-t-2 border-gray-300 pt-3 ">
           <p className="flex gap-1 items-center text-gray-600"><Clock size={20} />23:23:00</p>
           <Link
-            to='/'
+            to={`/course/if`}
             className="btn-primary text-sm"
             >
             Enroll Now
