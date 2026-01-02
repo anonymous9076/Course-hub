@@ -3,7 +3,6 @@ import { Field, ErrorMessage } from "formik";
 export default function CustomTextArea({
     name,
     label,
-    formik,
     placeholder = "Enter text...",
     className = "",
 }) {

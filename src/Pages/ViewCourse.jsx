@@ -1,43 +1,114 @@
 import React from 'react'
-import Player from '../components/VideoPlayer'
 import Container from '../components/Container'
 import Rating from '../components/Rating'
-import { Link } from 'react-router-dom'
-import { Clock } from 'lucide-react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Clock, Edit2, Trash2, PlayCircle } from 'lucide-react'
+import { useGetCourseById, useDeleteCourse } from '../hooks/useCourse'
+import { useUserDetails } from '../hooks/useAuth'
+import DeleteConfirmModal from '../components/elements/DeleteConfirmModal'
+import { useState } from 'react'
 
 const ViewCourse = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const { data: courseData, isLoading, error } = useGetCourseById(id);
+    const { data: userData } = useUserDetails();
+    const deleteCourseMutation = useDeleteCourse();
+
+    const course = courseData?.data;
+    const currentUser = userData?.user;
+
+    const isCreator = currentUser && course && (currentUser._id === course.created_by || currentUser.role === 'admin');
+
+    const handleDelete = async () => {
+        await deleteCourseMutation.mutateAsync(id);
+        navigate("/home");
+    };
+
+    const handleEdit = () => {
+        navigate(`/upload-resources?edit=${id}&type=course`);
+    };
+
+    if (isLoading) return <Container><div className="flex items-center justify-center min-h-[400px]">Loading...</div></Container>;
+    if (error) return <Container><div className="text-red-500 text-center py-20">Error loading course</div></Container>;
+    if (!course) return <Container><div className="text-center py-20 text-gray-500 text-xl font-bold">Course not found</div></Container>;
+
     return (
-        <>
-            <Container>
+        <Container>
+            <div className="flex flex-col lg:flex-row gap-10 py-10">
+                {/* Left Side: Content info */}
+                <div className="flex-1 space-y-6">
+                    <div className="flex items-center justify-between">
+                        <span className="bg-blue-400 text-white py-1.5 px-4 rounded-full text-sm font-bold shadow-sm uppercase tracking-wider">
+                            {course.category}
+                        </span>
 
-                <Player src='https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' poster="/Images/3785210.jpg"></Player>
-                <div className="p-5 py-3 space-y-2 flex  flex-col">
-                    <span className="bg-white py-1 px-2 rounded-lg text-sm shadow-lg w-fit ">Web Develpement</span>
-                    <p className=" text-4xl font-semibold text-start  text-gray-700 mt-2 ">
-                        React js MasterClass for Beginners
-                    </p>
-                    <div>
-                        <Rating rating={3.5} reviews={45}></Rating>
+                        {isCreator && (
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={handleEdit}
+                                    className="p-2 bg-white text-gray-600 rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-colors"
+                                    title="Edit Course"
+                                >
+                                    <Edit2 size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setIsDeleteModalOpen(true)}
+                                    className="p-2 bg-white text-gray-600 rounded-xl hover:bg-red-100 hover:text-red-600 transition-colors"
+                                    title="Delete Course"
+                                >
+                                    <Trash2 size={20} />
+                                </button>
+                            </div>
+                        )}
                     </div>
-                    <h2 className='text-2xl font-semibold text-gray-700 '>Description</h2>
-                    <p className='whitespace-pre-line!'> A long, effective description paints a vivid and immersive picture in the reader's mind by using sensory details, figurative language, and a logical structure to "show" rather than simply "tell" the reader about the subject.
-                        Key Elements of a Long Description
-                        Sensory Details: Engage all five senses (sight, sound, smell, taste, and touch) to make the reader feel present in the scene. Instead of just saying a room is creepy, describe the mysterious smells and weird noises.
-                        "Show, Don't Tell": Use specific, concrete details to create a mental image, allowing the reader to experience the scene for themselves. Telling: "The sunset was really cool." Showing: "Immense joy washed over me as the sunset's remarkable colors and breathtaking beauty captivated me".
-                        Figurative Language: Employ similes (comparisons using "like" or "as") and metaphors (direct comparisons) to add depth, originality, and emotional resonance to your descriptions. For example, instead of saying a person ran fast, you might say they were "running like the wind".
-                        Specific and Dynamic Word Choices: Use strong verbs, nouns, and precise adjectives and adverbs to avoid vague or clichéd language. Replace "a very old house" with "a house with paint curling off in thin strips".
-                        Logical Organization: Structure your description in a way that makes sense. You could organize details spatially (e.g., top to bottom, near to far) or chronologically (for an event). Start with an overview and then move to specific, important details.
-                        Point of View (POV): Filter the description through a character's perspective. Their emotions, motivations, and background influence what they notice and how they interpret their surroundings, which adds depth to both the description and the character.
-                        Strategic Placement: Weave descriptions into the action of your narrative to avoid slowing the pace. Focus detailed descriptions on important elements or moments in the story, as readers tend to linger where the writer lingers.
-                        Purpose and Meaning: Ensure the description serves a purpose beyond just painting a picture. It should convey a mood, foreshadow a future event, or reveal character traits to add value to the overall story.
-                        By applying these techniques, you can craft a long description that is not only detailed but also engaging and memorable for your reader.</p>
-                    <div className="flex items-center justify-between border-t-2 border-gray-300 pt-3 ">
-                        <p className="flex gap-1 items-center text-gray-600"><Clock size={20} />23:23:00</p>
 
+                    <DeleteConfirmModal
+                        isOpen={isDeleteModalOpen}
+                        onClose={() => setIsDeleteModalOpen(false)}
+                        onConfirm={handleDelete}
+                        title="Delete Course"
+                        message={`Are you sure you want to delete "${course.title}"? This action cannot be undone.`}
+                    />
+
+                    <h1 className="text-4xl md:text-5xl font-black text-[#2C3E50] leading-tight">
+                        {course.title}
+                    </h1>
+
+                    <div className="flex items-center gap-4">
+                        <Rating rating={course.rating || 0} reviews={course.reviews || 0} />
+                        <div className="h-4 w-[1px] bg-gray-300"></div>
+                        <div className="flex items-center text-gray-500 font-medium">
+                            <Clock size={18} className="mr-1" />
+                             {course.createdAt
+                ? new Date(course.createdAt).toLocaleDateString()
+                : "Just now"}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold text-[#2C3E50]">Course Description</h2>
+                        <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
+                            {course.description || "No description available."}
+                        </p>
                     </div>
                 </div>
-            </Container>
-        </>
+
+                {/* Right Side: Video Player */}
+                <div className="lg:w-[45%]">
+                    <div className="sticky top-24">
+                        <div className="rounded-[40px] overflow-hidden shadow-2xl shadow-blue-100 border-8 border-white bg-black aspect-video relative group">
+                            <video
+                                src={course.courseFile?.url}
+                                controls
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Container>
     )
 }
 

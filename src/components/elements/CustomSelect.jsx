@@ -5,24 +5,23 @@ export default function CustomSelect({
   options,
   formik,
   placeholder = "Select option",
-  defaultValue,
   onChange,
   className = "",
+  disabled = false,
 }) {
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
-  
-useEffect(() => {
-  if (formik && name) {
-    const currentValue = formik.values[name];
-    const found = options.find(opt => opt.value === currentValue);
-    setSelected(found || null);
-  }
-}, [formik.values[name], options, name]);
 
+  useEffect(() => {
+    if (formik?.values && name) {
+      const currentValue = formik.values[name];
+      const found = options.find((opt) => opt.value === currentValue);
+      setSelected(found || null);
+    }
+  }, [formik?.values, options, name]);
 
-  // ✅ Close dropdown when clicking outside
+  //  Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,8 +32,9 @@ useEffect(() => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Handle select
+  //  Handle select
   const handleSelect = (option) => {
+    if (disabled) return;
     setSelected(option);
     setOpen(false);
 
@@ -45,19 +45,23 @@ useEffect(() => {
     if (formik && name) {
       formik.setFieldValue(name, option.value);
     }
-    console.log(option)
+    console.log(option);
   };
 
   return (
     <div
       ref={dropdownRef}
-      className={`relative inline-block  w-full text-left ${className}`}
+      className={`relative inline-block w-full text-left ${className} ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
     >
       {/* Trigger Button */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => !disabled && setOpen(!open)}
+        disabled={disabled}
         type="button"
-        className="inline-flex items-center justify-between w-full py-2.5 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none"
+        className={`inline-flex items-center justify-between w-full py-2.5 px-4 text-sm font-medium border rounded-lg focus:outline-none transition-colors ${disabled
+            ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
+            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+          }`}
       >
         <span className="flex items-center truncate text-gray-800">
           {selected?.icon && <span className="mr-2">{selected.icon}</span>}
