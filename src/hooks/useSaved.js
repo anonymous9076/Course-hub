@@ -3,38 +3,67 @@ import { GetSavedData, ToggleSaved } from "../apis/saved-api";
 import { toast } from "react-toastify";
 
 
-// ✅ Get All Saved Items
 export const useGetSavedItems = () => {
   return useQuery({
     queryKey: ["savedItems"],
     queryFn: GetSavedData,
-    select: (res) => res.data, // extract data for easier usage
+    select: (data) => data.data,
     onError: (error) =>
       toast.error(
         error?.response?.data?.message ||
-          error.message ||
-          "❌ Failed to fetch saved items"
+        error.message ||
+        " Failed to fetch saved items"
       ),
   });
 };
 
 
-// ✅ Toggle Save / Unsave Item
 export const useToggleSavedItem = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, data }) => ToggleSaved(id, data),
-    onSuccess: (res) => {
-      toast.success(res?.data?.message || "✅ Item saved/unsaved successfully");
-      // Refresh saved items list automatically
-      queryClient.invalidateQueries(["savedItems"]);
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({ queryKey: ["savedItems"] });
+
+      const previousSavedItems = queryClient.getQueryData(["savedItems"]);
+
+      queryClient.setQueryData(["savedItems"], (old) => {
+        if (!old) return old;
+
+        const newRes = { ...old };
+        if (!newRes.data) return old;
+
+        const targetKey = data.type === "question" ? "questions" : "courses";
+        const list = newRes.data[targetKey] || [];
+
+        const exists = list.some((item) => item._id === id);
+
+        let newList;
+        if (exists) {
+          newList = list.filter((item) => item._id !== id);
+        } else {
+          newList = [...list, { _id: id }];
+        }
+
+        newRes.data = {
+          ...newRes.data,
+          [targetKey]: newList,
+        };
+
+        return newRes;
+      });
+
+      return { previousSavedItems };
     },
-    onError: (error) =>
-      toast.error(
-        error?.response?.data?.message ||
-          error.message ||
-          "❌ Failed to toggle saved item"
-      ),
+
+    onError: (error, _newItem, context) => {
+      if (context?.previousSavedItems) {
+        queryClient.setQueryData(["savedItems"], context.previousSavedItems);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["savedItems"] });
+    },
   });
 };

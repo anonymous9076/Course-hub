@@ -10,24 +10,24 @@ const Rating = ({ rating = 0, reviews = 0 }) => {
 
   return (
     <div className="flex items-center ">
-       <div className="flex items-center">
-  {Array.from({ length: Math.floor(rating) }, (_, index) => (
-    <Star key={index} fill={getStarColor()} size={20} stroke="0" />
-  ))}
+      <div className="flex items-center">
+        {Array.from({ length: Math.floor(rating) }, (_, index) => (
+          <Star key={index} fill={getStarColor()} size={20} stroke="0" />
+        ))}
 
-  {rating % Math.floor(rating) !== 0 && (
-    <StarHalf fill={getStarColor()} size={20} stroke="0" />
-  )}
-</div>
+        {rating % Math.floor(rating) !== 0 && (
+          <StarHalf fill={getStarColor()} size={20} stroke="0" />
+        )}
+      </div>
 
-      
+
       {reviews > 0 && (
         <>
           <p
             href="#"
             className="text-sm font-medium text-gray-600 "
           >
-            {`(${reviews})`} 
+            {`(${reviews})`}
           </p>
         </>
       )}
