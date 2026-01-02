@@ -74,7 +74,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           <button
             disabled={currentPage === totalPages}
             onClick={() => onPageChange(currentPage + 1)}
-            className="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-s-lg bg-primary hover:shadow-md text-white/90"
+            className="flex items-center justify-center px-3 h-8 ms-0 leading-tight rounded-e-lg bg-primary hover:shadow-md text-white/90"
           >
             Next
           </button>
