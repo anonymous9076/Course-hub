@@ -1,12 +1,23 @@
 import { Menu } from "lucide-react";
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useLogoutUser } from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // control mobile menu toggle
+  const navigate = useNavigate();
+  const { mutate: logoutUser } = useLogoutUser();
+
+  const userExisted = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    logoutUser();
+    localStorage.removeItem('token');
+    navigate("/login");
+  };
 
   const navItems = [
-    { title: "Home", path: "/" },
+    { title: "Home", path: "/home" },
     { title: "Upload", path: "/upload-resources" },
     { title: "Courses", path: "/courses" },
     { title: "Question Paper", path: "/question-paper" },
@@ -15,7 +26,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-full bg-white fixed z-10  border-gray-200 ">
+    <nav className="w-full bg-white fixed z-10  border-gray-200 shadow-lg ">
       <div className="max-w-7xl flex flex-wrap items-center justify-between p-4 py-4 mx-auto">
         {/* Logo */}
         <NavLink to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -31,11 +42,16 @@ const Navbar = () => {
 
         {/* Buttons */}
         <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
-          <Link to='/login'>
-          <button type="button" className="btn-primary ">
-            Log in
-          </button>
-          </Link>
+          {!userExisted && <Link to='/login'>
+            <button type="button" className="btn-primary ">
+              Log in
+            </button>
+          </Link>}
+          {userExisted && (
+            <button type="button" onClick={handleLogout} className="btn-primary ">
+              Log out
+            </button>
+          )}
           <button
             onClick={() => setIsOpen(!isOpen)}
             type="button"
@@ -50,9 +66,8 @@ const Navbar = () => {
         {/* Nav Links */}
         <div
           id="navbar-cta"
-          className={`${
-            isOpen ? "block" : "hidden"
-          } items-center justify-between w-full lg:flex lg:w-auto lg:order-1`}
+          className={`${isOpen ? "block" : "hidden"
+            } items-center justify-between w-full lg:flex lg:w-auto lg:order-1`}
         >
           <ul
             className="flex flex-col font-medium p-4 lg:p-0 mt-4 border border-gray-100 rounded-lg 
@@ -66,11 +81,10 @@ const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
                     `block py-2 px-4 rounded-2xl transition-all duration-200 
-                     ${
-                       isActive
-                         ? "bg-[#5AB2FF] text-white font-semibold" // active state
-                         : "text-gray-700! hover:bg-[#5AB2FF] hover:text-white!"
-                     }`
+                     ${isActive
+                      ? "bg-[#5AB2FF] text-white font-semibold" // active state
+                      : "text-gray-700! hover:bg-[#5AB2FF] hover:text-white!"
+                    }`
                   }
                 >
                   {item.title}
