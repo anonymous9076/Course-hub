@@ -1,60 +1,85 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ErrorMessage, useFormikContext } from "formik";
 
-export default function FileUpload({ name='file', formik, placeholder = "Upload file" }) {
+export default function FileUpload({ name = 'file', placeholder = "Upload files", multiple = false }) {
   const fileInputRef = useRef(null);
-  const { setFieldValue } = useFormikContext();
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [fileType, setFileType] = useState(null);
+  const { setFieldValue, values } = useFormikContext();
+  const [previews, setPreviews] = useState([]);
+
+  // Reset previews if Formik value is cleared
+  useEffect(() => {
+    if (!values[name]) {
+      setPreviews([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }, [values[name], name]);
 
   const handleDivClick = () => {
     fileInputRef.current.click();
   };
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    console.log('filepresent', file)
-    if (file) {
-      setFieldValue(name, file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      setFileType(file.type);
+    const files = Array.from(event.target.files);
+    console.log('files present', files)
+    if (files.length > 0) {
+      if (multiple) {
+        setFieldValue(name, files);
+        const newPreviews = files.map(file => ({
+          url: URL.createObjectURL(file),
+          type: file.type
+        }));
+        setPreviews(newPreviews);
+      } else {
+        const file = files[0];
+        setFieldValue(name, file);
+        setPreviews([{
+          url: URL.createObjectURL(file),
+          type: file.type
+        }]);
+      }
     }
   };
 
   return (
     <div className="col-span-4">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-900">
-        File
+      <label htmlFor={name} className="block text-sm font-medium text-gray-900 mb-1">
+        Files
       </label>
 
       <div
         onClick={handleDivClick}
-        className="relative col-span-4 h-48 rounded-lg border flex items-center justify-center border-gray-300 bg-white cursor-pointer overflow-hidden hover:bg-gray-50"
+        className={`relative col-span-4 min-h-[192px] rounded-2xl border-2 border-dashed flex items-center justify-center border-gray-200 bg-white cursor-pointer overflow-hidden hover:border-blue-400 hover:bg-blue-50/30 transition-all group`}
       >
-        {/* Image preview */}
-        {previewUrl && fileType.startsWith("image/") && (
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+        {/* Multi-image preview */}
+        {previews.length > 0 && (
+          <div className="absolute inset-0 w-full h-full p-2 grid grid-cols-3 gap-2 bg-white/90 overflow-y-auto">
+            {previews.map((preview, index) => (
+              <div key={index} className="relative aspect-video rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                {preview.type.startsWith("image/") ? (
+                  <img
+                    src={preview.url}
+                    alt={`Preview ${index}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <video
+                    src={preview.url}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         )}
 
-        {/* Video preview */}
-        {previewUrl && fileType.startsWith("video/") && (
-          <video
-            src={previewUrl}
-            className="absolute inset-0 w-full h-full object-cover"
-            autoPlay
-            loop
-            muted
-          />
-        )}
-
-        {/* Overlay text */}
-        <div className="relative z-10 bg-primary shadow-2lg shadow-white px-4 py-2 rounded-lg text-white text-sm">
-          {placeholder}
+        {/* Overlay text - only show if no previews OR show as a small badge if previews exist */}
+        <div className={`relative z-10 ${previews.length > 0 ? 'bg-black/60 backdrop-blur-md scale-90' : 'bg-[#5AB2FF] shadow-lg shadow-blue-200'} px-6 py-3 rounded-full text-white text-sm font-bold flex items-center gap-2 group-hover:scale-105 transition-transform`}>
+          {previews.length > 0 ? `Change ${multiple ? 'Files' : 'File'}` : placeholder}
         </div>
 
         <input
@@ -64,6 +89,7 @@ export default function FileUpload({ name='file', formik, placeholder = "Upload 
           className="hidden"
           onChange={handleFileChange}
           accept="image/*,video/*"
+          multiple={multiple}
         />
       </div>
 

@@ -5,10 +5,11 @@ import {
   UpdateQuestionPaper,
   DeleteQuestionPaper,
   LikeQuestionPaper,
+  GetQuestionPaperById,
 } from "../apis/question-api";
 import { toast } from "react-toastify";
 
-// ✅ Create Question Paper
+//  Create Question Paper
 export const useCreateQuestionPaper = () => {
   const queryClient = useQueryClient();
 
@@ -19,23 +20,23 @@ export const useCreateQuestionPaper = () => {
       queryClient.invalidateQueries(["questionPapers"]);
     },
     onError: (error) =>
-      toast.error(error?.response?.data?.message || error.message || "❌ Failed to create question paper"),
+      toast.error(error?.response?.data?.message || error.message || " Failed to create question paper"),
   });
 };
 
 
-// ✅ Get All Question Papers (supports filters, sort, pagination)
+//  Get All Question Papers (supports filters, sort, pagination)
 export const useGetQuestionPapers = (filters) => {
   return useQuery({
     queryKey: ["questionPapers", filters],
     queryFn: () => GetQuestionPapers(filters),
     onError: (error) =>
-      toast.error(error?.response?.data?.message || error.message || "❌ Failed to fetch question papers"),
+      toast.error(error?.response?.data?.message || error.message || " Failed to fetch question papers"),
   });
 };
 
 
-// ✅ Update Question Paper
+//  Update Question Paper
 export const useUpdateQuestionPaper = () => {
   const queryClient = useQueryClient();
 
@@ -46,12 +47,12 @@ export const useUpdateQuestionPaper = () => {
       queryClient.invalidateQueries(["questionPapers"]);
     },
     onError: (error) =>
-      toast.error(error?.response?.data?.message || error.message || "❌ Failed to update question paper"),
+      toast.error(error?.response?.data?.message || error.message || " Failed to update question paper"),
   });
 };
 
 
-// ✅ Delete Question Paper
+//  Delete Question Paper
 export const useDeleteQuestionPaper = () => {
   const queryClient = useQueryClient();
 
@@ -62,12 +63,12 @@ export const useDeleteQuestionPaper = () => {
       queryClient.invalidateQueries(["questionPapers"]);
     },
     onError: (error) =>
-      toast.error(error?.response?.data?.message || error.message || "❌ Failed to delete question paper"),
+      toast.error(error?.response?.data?.message || error.message || " Failed to delete question paper"),
   });
 };
 
 
-// ✅ Like Question Paper
+//  Like Question Paper
 export const useLikeQuestionPaper = () => {
   const queryClient = useQueryClient();
 
@@ -78,6 +79,17 @@ export const useLikeQuestionPaper = () => {
       queryClient.invalidateQueries(["questionPapers"]);
     },
     onError: (error) =>
-      toast.error(error?.response?.data?.message || error.message || "❌ Failed to like question paper"),
+      toast.error(error?.response?.data?.message || error.message || " Failed to like question paper"),
+  });
+};
+
+//  Get Single Question Paper
+export const useGetQuestionPaperById = (id) => {
+  return useQuery({
+    queryKey: ["questionPaper", id],
+    queryFn: () => GetQuestionPaperById(id),
+    enabled: !!id,
+    onError: (error) =>
+      toast.error(error?.response?.data?.message || error.message || " Failed to fetch question paper"),
   });
 };
