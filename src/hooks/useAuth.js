@@ -39,7 +39,7 @@ export const useRegisterUser = () => {
       localStorage.setItem('token', data.token)
       toast.success('Registration successful')
       setTimeout(() => {
-        navigate("/");
+        navigate("/home");
       }, 2000);
     },
     onError: (error) => toast.error(error?.response?.data?.message || error.message || 'Registration failed'),
