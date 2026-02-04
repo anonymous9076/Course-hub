@@ -2,9 +2,10 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Formik, ErrorMessage, Field } from "formik";
 import { useNavigate, Link } from "react-router-dom";
-import { useRegisterUser } from "../hooks/useAuth";
-import { ToastContainer } from "react-toastify";
+import { useRegisterUser, useGoogleLoginUser } from "../hooks/useAuth";
+import { ToastContainer, toast } from "react-toastify";
 import { User, Mail, Lock, UserPlus, Loader2, CheckCircle2 } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
 const registerHero = "/Images/43.jpg";
 
 const Register = () => {
@@ -34,6 +35,14 @@ const Register = () => {
 
   const navigate = useNavigate();
   const registerMutation = useRegisterUser();
+  const googleLoginMutation = useGoogleLoginUser();
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      await googleLoginMutation.mutateAsync({ token: tokenResponse.access_token });
+    },
+    onError: () => toast.error("Google Signup Failed"),
+  });
 
   return (
     <div className="min-h-screen w-full flex bg-[#F0F7FF] items-center justify-center p-4 font-['Inter',sans-serif]">
@@ -201,6 +210,7 @@ const Register = () => {
                 <button
                   type="button"
                   className="w-full flex items-center justify-center py-3 bg-white border border-gray-100 text-gray-600 rounded-[16px] text-xs font-semibold hover:bg-gray-50 transition-all duration-300 gap-2.5"
+                  onClick={() => handleGoogleLogin()}
                 >
                   <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="Google" />
                   Sign up with Google
@@ -219,7 +229,7 @@ const Register = () => {
           </Formik>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

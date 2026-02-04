@@ -25,7 +25,7 @@ const Card = ({ item }) => {
 
   return (
     <>
-      <div className="max-w-sm bg-white! hover:translate-y-[-5px] transition-all duration-300 border border-gray-200 rounded-2xl shadow-lg overflow-hidden!">
+      <div className="max-w-sm w-full bg-white! hover:translate-y-[-5px] transition-all duration-300 border border-gray-200 rounded-2xl shadow-lg overflow-hidden!">
         <div className=" relative">
           <span className={`absolute top-2 right-2 cursor-pointer`} title={isSaved ? "Unsave" : "Save"} onClick={handleToggleSave}>
             <Bookmark fill={`${isSaved ? 'red' : '#5AB2FF'}`} stroke="white" size={30} strokeWidth={0} className="rounded-lg" />

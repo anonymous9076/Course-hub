@@ -18,7 +18,7 @@ const QuestionCard = ({ item }) => {
 
   return (
     <>
-      <div className="max-w-sm bg-white! border border-gray-200 hover:translate-y-[-5px] transition-all duration-300 rounded-2xl shadow-lg overflow-hidden!">
+      <div className="max-w-sm w-full bg-white! border border-gray-200 hover:translate-y-[-5px] transition-all duration-300 rounded-2xl shadow-lg overflow-hidden!">
         <div className=" relative">
           <span
             className={`absolute top-2 right-2 cursor-pointer`}

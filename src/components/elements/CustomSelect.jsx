@@ -6,6 +6,7 @@ export default function CustomSelect({
   formik,
   placeholder = "Select option",
   onChange,
+  onDelete,
   className = "",
   disabled = false,
 }) {
@@ -59,8 +60,8 @@ export default function CustomSelect({
         disabled={disabled}
         type="button"
         className={`inline-flex items-center justify-between w-full py-2.5 px-4 text-sm font-medium border rounded-lg focus:outline-none transition-colors ${disabled
-            ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
-            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+          ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
+          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
           }`}
       >
         <span className="flex items-center truncate text-gray-800">
@@ -98,6 +99,18 @@ export default function CustomSelect({
                 >
                   {option.icon && <span className="mr-2">{option.icon}</span>}
                   {option.label}
+                  {onDelete && option.canDelete && (
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(option);
+                      }}
+                      className="ml-auto p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                      title="Delete category"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
+                    </div>
+                  )}
                 </button>
               </li>
             ))}

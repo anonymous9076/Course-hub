@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  // baseURL: "http://localhost:8080/diginotes",
-  baseURL: "https://coursehub-backend-six.vercel.app/diginotes",
+  baseURL: "http://localhost:8080/diginotes",
+  // baseURL: "https://coursehub-backend-six.vercel.app/diginotes",
 });
 
 // Interceptor to add token

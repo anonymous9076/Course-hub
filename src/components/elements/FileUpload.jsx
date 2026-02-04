@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { ErrorMessage, useFormikContext } from "formik";
 
-export default function FileUpload({ name = 'file', placeholder = "Upload files", multiple = false }) {
+export default function FileUpload({ name = 'file', placeholder = "Upload files", multiple = false, accept = "image/*,video/*" }) {
   const fileInputRef = useRef(null);
   const { setFieldValue, values } = useFormikContext();
   const [previews, setPreviews] = useState([]);
@@ -44,9 +44,7 @@ export default function FileUpload({ name = 'file', placeholder = "Upload files"
 
   return (
     <div className="col-span-4">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-900 mb-1">
-        Files
-      </label>
+
 
       <div
         onClick={handleDivClick}
@@ -88,7 +86,7 @@ export default function FileUpload({ name = 'file', placeholder = "Upload files"
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}
-          accept="image/*,video/*"
+          accept={accept}
           multiple={multiple}
         />
       </div>

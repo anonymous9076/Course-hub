@@ -7,7 +7,8 @@ import {
   UserDetails,
   UserPasswordUpdate,
   UserDetailsUpdate,
-  Logout
+  Logout,
+  GoogleLogin
 } from '../apis/auth-apis';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +19,22 @@ export const useLoginUser = () => {
 
   return useMutation({
     mutationFn: Login,
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.token)
+      toast.success('Login successful')
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
+    },
+    onError: (error) => toast.error(error?.response?.data?.message || error.message || ' Login failed'),
+  });
+};
+
+export const useGoogleLoginUser = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: GoogleLogin,
     onSuccess: (data) => {
       localStorage.setItem('token', data.token)
       toast.success('Login successful')

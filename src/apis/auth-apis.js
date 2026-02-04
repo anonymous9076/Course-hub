@@ -6,6 +6,13 @@ export const Login = async (data) => {
   })
   return res.data;
 }
+
+export const GoogleLogin = async (data) => {
+  const res = await apiClient.post('/google', data, {
+    headers: { 'Content-Type': 'application/json' },
+  })
+  return res.data;
+}
 export const Register = async (data) => {
   console.log(data, 'data')
   const res = await apiClient.post('/register', data, {
